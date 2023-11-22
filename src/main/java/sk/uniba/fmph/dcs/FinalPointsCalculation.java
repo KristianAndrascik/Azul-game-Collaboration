@@ -3,12 +3,13 @@ package sk.uniba.fmph.dcs;
 import java.util.Optional;
 
 public class FinalPointsCalculation {
-    private static Vertical vertical = new Vertical();
-    private static Horizontal horizontal = new Horizontal();
-    private static Color color = new Color();
+    public static Points getPoints(Optional<Tile>[][] wall){
+        Horizontal horizontalLineRule = new Horizontal();
+        Vertical verticalLineRule = new Vertical();
+        Color fullColorRule = new Color();
 
+        int sum = fullColorRule.calculatePoints(wall) + horizontalLineRule.calculatePoints(wall) + verticalLineRule.calculatePoints(wall);
 
-    public static int calculatePoints(Optional<Tile>[][] wall) {
-        return vertical.calculate(wall) + horizontal.calculate(wall) + color.calculate(wall);
+        return new Points(sum);
     }
 }
