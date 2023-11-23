@@ -3,14 +3,16 @@ package sk.uniba.fmph.dcs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FinalPointsCalcTest {
 
-    private Tile[] tiles;
-    private Optional<Tile>[][] wall;
+    private List<Tile> tiles;
+    private List<List<Optional<Tile>>> wall;
 
     @BeforeEach
     public void setUp() {
@@ -20,35 +22,38 @@ public class FinalPointsCalcTest {
     }
 
     private void initializeTiles() {
-        tiles = new Tile[Tile.values().length - 1];
+        tiles = List.of(Tile.values());
         int i = 0;
         for (Tile tile : Tile.values()) {
             if (tile != Tile.STARTING_PLAYER) {
-                tiles[i] = tile;
+                tiles.set(i, tile);
                 i++;
             }
         }
     }
 
     private void initializeWall() {
-        wall = new Optional[tiles.length][tiles.length];
-        for(int j = 0; j < tiles.length; j++){
-            for(int k = 0; k < tiles.length; k++){
-                wall[j][k] = Optional.empty();
+        wall = new ArrayList<>();
+        for (int j = 0; j < tiles.size(); j++) {
+            List<Optional<Tile>> row = new ArrayList<>();
+            for (int k = 0; k < tiles.size(); k++) {
+                row.add(Optional.empty());
             }
+            wall.add(row);
         }
+
     }
 
     @Test
     public void testGetPointsWithCompleteHorizontalLine() {
         // Set up a wall with a complete horizontal line
-        wall[0][1] = Optional.of(tiles[0]);
-        wall[0][4] = Optional.of(tiles[4]);
-        for (int i = 0; i < tiles.length; i++) {
-            wall[1][i] = Optional.of(tiles[(i + 1) % tiles.length]);
+        wall.get(0).set(1, Optional.of(tiles.get(0)));
+        wall.get(0).set(4, Optional.of(tiles.get(4)));
+        for (int i = 0; i < tiles.size(); i++) {
+            wall.get(1).set(i, Optional.of(tiles.get((i + 1) % tiles.size())));
         }
-        wall[2][0] = Optional.of(tiles[0]);
-        wall[3][1] = Optional.of(tiles[1]);
+        wall.get(2).set(0, Optional.of(tiles.get(0)));
+        wall.get(3).set(1, Optional.of(tiles.get(1)));
 
         int points = FinalPointsCalculation.getPoints(wall).getValue();
 
@@ -59,11 +64,11 @@ public class FinalPointsCalcTest {
     @Test
     public void testGetPointsWithCompleteVerticalLine() {
         // Set up a wall with a complete vertical line
-        wall[0][0] = Optional.of(tiles[2]);
-        wall[1][0] = Optional.of(tiles[0]);
-        wall[2][0] = Optional.of(tiles[1]);
-        wall[3][0] = Optional.of(tiles[3]);
-        wall[4][0] = Optional.of(tiles[4]);
+        wall.get(0).set(0, Optional.of(tiles.get(2)));
+        wall.get(1).set(0, Optional.of(tiles.get(0)));
+        wall.get(2).set(0, Optional.of(tiles.get(1)));
+        wall.get(3).set(0, Optional.of(tiles.get(3)));
+        wall.get(4).set(0, Optional.of(tiles.get(4)));
 
         int points = FinalPointsCalculation.getPoints(wall).getValue();
 
@@ -74,11 +79,11 @@ public class FinalPointsCalcTest {
     @Test
     public void testGetPointsWithCompleteFullColorRule() {
         // Set up a wall with all tiles filled
-        wall[0][0] = Optional.of(tiles[0]);
-        wall[1][1] = Optional.of(tiles[0]);
-        wall[2][2] = Optional.of(tiles[0]);
-        wall[3][3] = Optional.of(tiles[0]);
-        wall[4][4] = Optional.of(tiles[0]);
+        for (int i = 0; i < tiles.size(); i++) {
+            for (int j = 0; j < tiles.size(); j++) {
+                wall.get(i).set(j, Optional.of(tiles.get((i + j) % tiles.size())));
+            }
+        }
 
 
         int points = FinalPointsCalculation.getPoints(wall).getValue();
