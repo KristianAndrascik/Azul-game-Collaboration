@@ -22,15 +22,14 @@ public class GameFinishedTest {
     }
 
     private void initializeTiles() {
-        tiles = java.util.List.of(Tile.values());
-        int i = 0;
+        tiles = new ArrayList<>();
         for (Tile tile : Tile.values()) {
             if (tile != Tile.STARTING_PLAYER) {
-                tiles.set(i, tile);
-                i++;
+                tiles.add(tile);
             }
         }
     }
+
 
     private void initializeWall() {
         wall = new ArrayList<>();

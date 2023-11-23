@@ -22,15 +22,14 @@ public class FinalPointsCalcTest {
     }
 
     private void initializeTiles() {
-        tiles = List.of(Tile.values());
-        int i = 0;
+        tiles = new ArrayList<>();
         for (Tile tile : Tile.values()) {
             if (tile != Tile.STARTING_PLAYER) {
-                tiles.set(i, tile);
-                i++;
+                tiles.add(tile);
             }
         }
     }
+
 
     private void initializeWall() {
         wall = new ArrayList<>();
@@ -79,12 +78,11 @@ public class FinalPointsCalcTest {
     @Test
     public void testGetPointsWithCompleteFullColorRule() {
         // Set up a wall with all tiles filled
-        for (int i = 0; i < tiles.size(); i++) {
-            for (int j = 0; j < tiles.size(); j++) {
-                wall.get(i).set(j, Optional.of(tiles.get((i + j) % tiles.size())));
-            }
-        }
-
+        wall.get(0).set(0, Optional.of(tiles.get(0)));
+        wall.get(1).set(1, Optional.of(tiles.get(0)));
+        wall.get(2).set(2, Optional.of(tiles.get(0)));
+        wall.get(3).set(3, Optional.of(tiles.get(0)));
+        wall.get(4).set(4, Optional.of(tiles.get(0)));
 
         int points = FinalPointsCalculation.getPoints(wall).getValue();
 

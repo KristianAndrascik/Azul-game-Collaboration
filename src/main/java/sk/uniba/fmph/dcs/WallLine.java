@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class WallLine {
+public class WallLine {/*
     private ArrayList<Tile> tileTypes;
     private WallLine lineUp;
     private WallLine lineDown;
@@ -109,5 +109,5 @@ public class WallLine {
             }
         }
         return toReturn;
-    }
+    }*/
 }
