@@ -1,27 +1,27 @@
 package sk.uniba.fmph.dcs;
 
-import sk.uniba.fmph.dcs.interfaces.FinalPointsCalculationInterface;
-import sk.uniba.fmph.dcs.interfaces.GameFinishedInterface;
-import sk.uniba.fmph.dcs.interfaces.PatternLineInterface;
-import sk.uniba.fmph.dcs.interfaces.WallLineInterface;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Board {
+public class Board implements BoardInterface {
     private final Floor floor;
-    private final Points points;
+    private final ArrayList<Points> points;
     private final List<PatternLineInterface> patternLines;
     private final List<WallLineInterface> wallLines;
+    private final FinalPointsCalculationInterface finalPointsCalculation;
+    private final GameFinishedInterface gameFinished;
 
-    public Board(Floor floor, Points points, List<PatternLineInterface> patternLines, List<WallLineInterface> wallLines) {
-
+    public Board(Floor floor, ArrayList<Points> points, List<PatternLineInterface> patternLines, List<WallLineInterface> wallLines, FinalPointsCalculationInterface finalPointsCalculation, GameFinishedInterface gameFinishedInterface) {
+        this.finalPointsCalculation = finalPointsCalculation;
+        this.gameFinished = gameFinishedInterface;
         this.floor = floor;
         this.points = points;
         this.patternLines = patternLines;
         this.wallLines = wallLines;
     }
 
+    @Override
     public void put(int destinationIndex, List<Tile> tiles) {
 
         if (destinationIndex == -1) {
@@ -59,23 +59,25 @@ public class Board {
                 .map(WallLineInterface::getTiles) // Convert each WallLineInterface to List<Optional<Tile>>
                 .collect(Collectors.toList());
 
-        FinishRoundResult result = GameFinishedInterface.gameFinished(wallTiles);
+        FinishRoundResult result = gameFinished.gameFinished(wallTiles);
         if (result == FinishRoundResult.GAME_FINISHED) endGame();
         return result;
     }
 
+    @Override
     public void endGame() {
 
         List<List<Optional<Tile>>> wallTiles = wallLines.stream()
                 .map(WallLineInterface::getTiles) // Convert each WallLineInterface to List<Optional<Tile>>
                 .collect(Collectors.toList());
 
-        Points finalPoints = FinalPointsCalculationInterface.getPoints(wallTiles);
+        Points finalPoints = finalPointsCalculation.getPoints(wallTiles);
 
         // Add the final points to the points object
         points.add(finalPoints);
     }
 
+    @Override
     public String state() {
         StringBuilder stateBuilder = new StringBuilder();
 
@@ -96,12 +98,13 @@ public class Board {
         stateBuilder.append(floor.state()).append("\n");
 
         // Append current points
-        stateBuilder.append(points.toString()).append("\n");
+        stateBuilder.append(this.getPoints().toString()).append("\n");
 
         return stateBuilder.toString();
     }
 
+    @Override
     public Points getPoints(){
-        return this.points;
+        return Points.sum(points);
     }
 }

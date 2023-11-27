@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FinalPointsCalculationInterface {
-    Points getPoints(List<Optional<Tile>> wall);
+    Points getPoints(List<List<Optional<Tile>>> wall);
 }

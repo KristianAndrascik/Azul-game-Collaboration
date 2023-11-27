@@ -2,8 +2,10 @@ package sk.uniba.fmph.dcs;
 
 import org.junit.Before;
 import org.junit.Test;
-import sk.uniba.fmph.dcs.interfaces.PatternLineInterface;
-import sk.uniba.fmph.dcs.interfaces.WallLineInterface;
+import sk.uniba.fmph.dcs.FinalPointsCalculationInterface;
+import sk.uniba.fmph.dcs.GameFinishedInterface;
+import sk.uniba.fmph.dcs.PatternLineInterface;
+import sk.uniba.fmph.dcs.WallLineInterface;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,11 +78,25 @@ class FakeWallLine implements WallLineInterface {
     }
 }
 
+class FakeFinalPointsCal implements FinalPointsCalculationInterface {
+    @Override
+    public Points getPoints(List<List<Optional<Tile>>> wall) {
+        return null;
+    }
+}
+
+class FakeGameFinished implements GameFinishedInterface {
+    @Override
+    public FinishRoundResult gameFinished(List<List<Optional<Tile>>> wall) {
+        return FinishRoundResult.NORMAL;
+    }
+}
+
 
 public class BoardTest {
     private Board board;
     private Floor fakeFloor;
-    private Points fakePoints;
+    private ArrayList<Points> fakePoints;
     private List<PatternLineInterface> fakePatternLines;
     private List<WallLineInterface> fakeWallLines;
 
@@ -88,17 +104,19 @@ public class BoardTest {
     public void setUp() {
         // Initialize the fake objects
         FakeUsedTiles usedTiles = new FakeUsedTiles();
-        ArrayList<Points> pointPattern = new ArrayList<Points>();
-        pointPattern.add(new Points(1));
-        pointPattern.add(new Points(2));
-        pointPattern.add(new Points(2));
+        ArrayList<Points> pointPattern = new ArrayList<>();
+        pointPattern.add(new Points(-1));
+        pointPattern.add(new Points(-2));
 
         fakeFloor = new Floor(usedTiles, pointPattern);
-        fakePoints = new Points(5);
+        fakePoints = new ArrayList<>(Arrays.asList(new Points(5)));
         fakePatternLines = Arrays.asList(new FakePatternLine(1), new FakePatternLine(2));
         fakeWallLines = Arrays.asList(new FakeWallLine(), new FakeWallLine());
 
-        board = new Board(fakeFloor, fakePoints, fakePatternLines, fakeWallLines);
+        FinalPointsCalculationInterface finalPointsCalculation = new FakeFinalPointsCal();
+        GameFinishedInterface gameFinished = new FakeGameFinished();
+
+        board = new Board(fakeFloor, fakePoints, fakePatternLines, fakeWallLines, finalPointsCalculation, gameFinished);
     }
 
     @Test
@@ -125,7 +143,7 @@ public class BoardTest {
         List<Tile> tiles3 = Arrays.asList(Tile.GREEN);
         board.put(-1, tiles3);
         board.finishRound();
-        assertEquals("After adding one tile to floor, points should go down minus 6", new Points(6), board.getPoints());
+        assertEquals("After adding one tile to floor, points should go down minus 1, therefore to 4", new Points(4), board.getPoints());
     }
 
     @Test
