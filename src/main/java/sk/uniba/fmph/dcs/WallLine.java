@@ -89,7 +89,7 @@ public class WallLine {
             while (current.lineDown != null) {
                 if (!current.lineDown.getTiles().get(idx).isEmpty()){
                     points++;
-                    current = current.lineUp;
+                    current = current.lineDown;
                 }else{
                     break;
                 }
