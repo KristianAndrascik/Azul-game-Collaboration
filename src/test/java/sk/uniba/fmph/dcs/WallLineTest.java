@@ -22,7 +22,7 @@ public class WallLineTest {
     LinkedList<Tile> tileTypes2 = new LinkedList<Tile>(tileTypes1.subList(1,5));
     tileTypes2.add(Tile.RED);
 
-    System.out.println();
+   
     LinkedList<Tile> tileTypes3 = new LinkedList<Tile>(tileTypes2.subList(1,5));
     tileTypes3.add(Tile.BLUE);
 
